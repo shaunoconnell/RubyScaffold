@@ -1,0 +1,54 @@
+#!/usr/bin/env ruby
+
+
+
+puts "Setting up new project getting deps"
+
+required_gems = ['rake','bundler']
+
+required_gems.each do |gem_name|
+  begin
+    require gem_name
+    puts "found #{gem_name}...ok to proceed"
+  rescue LoadError => le
+    puts "missing dependency #{gem_name} attempting to install"
+    begin
+      stdout = `gem install #{gem_name}`
+      puts "finished with:\n   #{stdout}"
+    rescue Exception => e
+      puts "error installing gem:\n  #{gem_name}\nPlease check to make sure executables are on your path."
+      exit(1)
+    end
+  end
+end
+
+#require 'rubygems'
+require 'goat'
+
+if ARGV.length > 0
+  simple_component = Goat::SimpleComponent.new ARGV[0]
+else
+  simple_component = Goat::SimpleComponent.new
+end
+
+generator = Goat::Generator.new(simple_component)
+generator.run
+
+#project_name = "new_ruby_project"
+#directories = ['bin','lib','test','spec','ext']
+#working_dir = "#{Dir.pwd}/#{project_name}"
+#
+#puts "attempting to create project directory #{working_dir}"
+#
+#if File.exists?(working_dir)
+#  puts "project directory already exists.  exiting. . ."
+#  exit 1
+#end
+#
+#Dir.mkdir(working_dir)
+#
+#directories.each do |directory_name|
+#  directory_to_create = "#{working_dir}/#{directory_name}"
+#  Dir.mkdir(directory_to_create) unless File.exists? directory_to_create
+#end
+
